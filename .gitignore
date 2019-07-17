@@ -1,0 +1,11 @@
+#Config file contains secrets.
+config.py
+
+#Idea generated files.
+.idea
+
+#Ignore .pyc files to avoid side effects in future.
+*.pyc
+
+#Ignore all CSVs, these are temp stores of the last uploaded file.
+*.csv

@@ -1,14 +1,27 @@
-# ontask_scripts
+# Ontask Scripts
 
-This repository contains 2 python scripts. Script one deals with user and container creation and script two deals with scheduled data imports
+This repository contains 1 python scripts. 
+The script does scheduled data imports from Vula to OnTask.
 
-## Script One - UserAndContainerCreation.py
-
-This script does two things:
-
-1. Create a user in OnTask.
-2. Create a container and link container to user.
-
-## Script Two - DataImport.py
+## Script One -  DataImport.py
 
 This script imports data from Sakai into ontask via a CSV.
+
+## Configuration
+
+1. Create a file named `config.py`.
+2. Add the following:
+    
+        #Your domain and credentials
+        ONTASK_CREDENTIALS = {
+            'url': '<YOUR_URL>' #e.g. ontask.com/
+            'email': '<YOUR_EMAIL>',
+            'password': '<YOUR_PASSWORD>'
+        }
+
+        #Your domain and credentials
+        VULA_CREDENTIALS = {
+            'url': '<YOUR_URL>' #e.g. lms.com/
+            'username': '<YOUR_USERNAME>',
+            'password': '<YOUR_PASSWORD>'
+         }
