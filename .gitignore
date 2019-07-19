@@ -1,8 +1,11 @@
 #Config file contains secrets.
 config.py
 
-#Idea generated files.
+#Ignore idea generated files.
 .idea
+
+#Ignore log files.
+*.log
 
 #Ignore .pyc files to avoid side effects in future.
 *.pyc

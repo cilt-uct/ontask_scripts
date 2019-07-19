@@ -9,7 +9,7 @@ This script imports data from Sakai into ontask via a CSV.
 
 ## Configuration
 
-1. Create a file named `config.py`.
+1. Create a file named `config.py` in the config directory.
 2. Add the following:
     
         #Your domain and credentials
@@ -25,3 +25,5 @@ This script imports data from Sakai into ontask via a CSV.
             'username': '<YOUR_USERNAME>',
             'password': '<YOUR_PASSWORD>'
          }
+3. Create a new directory named log.
+4. Create a new directory named csv.

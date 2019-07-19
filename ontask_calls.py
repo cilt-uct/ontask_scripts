@@ -10,16 +10,26 @@ def ontask_login():
     headers = {'Content-Type': 'application/json'}
     data = json.dumps(payload)
 
-    r = requests.post(url, data=data, verify=False, headers=headers)
-    return r.text
+    try:
+        r = requests.post(url, data=data, verify=False, headers=headers)
+        r.raise_for_status()
+        return r.text
+    except HTTPError as e:
+        status_code = e.response.status_code
+        logging.error(repr(status_code) + ": Failed to log into OnTask.")
 
 
 def get_all_containers(token):
     url = ONTASK['url'] + 'administration/containers/'
     headers = {'Authorization': "Token " + token}
 
-    r = requests.get(url, verify=False, headers=headers)
-    return r.text
+    try:
+        r = requests.get(url, verify=False, headers=headers)
+        r.raise_for_status()
+        return r.text
+    except HTTPError as e:
+        status_code = e.response.status_code
+        logging.error(repr(status_code) + ": Failed to get all containers from OnTask.")
 
 
 def get_all_data_sources(owner, token):
@@ -27,8 +37,13 @@ def get_all_data_sources(owner, token):
     payload = {'owner': owner}
     headers = {'Authorization': "Token " + token}
 
-    r = requests.get(url, data=payload, verify=False, headers=headers)
-    return r.text
+    try:
+        r = requests.get(url, data=payload, verify=False, headers=headers)
+        r.raise_for_status()
+        return r.text
+    except HTTPError as e:
+        status_code = e.response.status_code
+        logging.error(repr(status_code) + ": Failed to get all data sources from OnTask.")
 
 
 def create_data_sources(container, url, token, sources):
@@ -41,38 +56,52 @@ def create_data_sources(container, url, token, sources):
 
     for source in sources:
 
-        files = {'file': open(source+'.csv', 'rb')}
+        files = {'file': open('csv/' + source + '.csv', 'rb')}
         payload = {
             'name': source,
             'container': container['id'],
-            'payload': '{"connection":{"dbType":"csvTextFile","files":[{"name":"test_csv.csv","delimiter":","}]},'
-                       '"name":"Test"}',
+            'payload': '{"connection":{"dbType":"csvTextFile","files":[{"name":"'
+                       + source + '.csv","delimiter":","}]},'
+                                  '"name":"Test"}',
         }
         headers = {'Authorization': "Token " + token}
 
-        r = requests.post(url, data=payload, files=files, verify=False, headers=headers)
-        print(r.text)
+        try:
+            r = requests.post(url, data=payload, files=files, verify=False, headers=headers)
+            r.raise_for_status()
+            logging.info("Successfully created datasource: " + source + " for container: " + container['code'])
+        except HTTPError as e:
+            status_code = e.response.status_code
+            logging.error(
+                repr(status_code) + ": Failed to create data-sources OnTask. Container: " +
+                container['code'] + " on OnTask. " + e.response.text)
 
 
 def update_data_sources(container, url, token, source):
     session = vula_login()
-
-    if source is 'Vula_Memberships':
+    data_source_name = source['name']
+    if data_source_name == 'Vula_Memberships':
         site_members = json.loads(get_site_memberships(container['description'], session))['membership_collection']
-        create_csv(site_members, source + ".csv")
-    elif source is 'Vula_Gradebook':
+        create_csv(site_members, data_source_name + ".csv")
+    elif data_source_name == 'Vula_Gradebook':
         gradebook_data = json.loads(get_gradebook_data(container['description'], session))['assignments']
-        create_csv(gradebook_data, source + ".csv")
+        create_csv(gradebook_data, data_source_name + ".csv")
 
-    files = {'file': open(source+'.csv', 'rb')}
+    files = {'file': open('csv/' + data_source_name + '.csv', 'rb')}
     payload = {
         'name': source,
         'container': container['id'],
-        'payload': '{"connection":{"dbType":"csvTextFile","files":[{"name":"test_csv.csv","delimiter":","}]},'
-                   '"name":"Test"}',
+        'payload': '{"connection":{"dbType":"csvTextFile","files":[{"name":"'
+                   + data_source_name + '.csv","delimiter":","}]},"name":"Test"}',
     }
     headers = {'Authorization': "Token " + token}
 
-    r = requests.patch(url, data=payload, files=files, verify=False, headers=headers)
-
-    print(r.text)
+    try:
+        r = requests.options(url, data=payload, files=files, verify=False, headers=headers)
+        r.raise_for_status()
+        return r
+    except HTTPError as e:
+        status_code = e.response.status_code
+        logging.error(
+            repr(status_code) + ": Failed to update data for container: " +
+            container['code'] + " data-source: " + data_source_name + " on OnTask. " + e.response.text)
