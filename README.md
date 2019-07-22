@@ -21,6 +21,8 @@ This script imports data from Sakai into ontask via a CSV. The process it follow
 1. Create a file named `config.py` in the config directory.
 2. Add the following:
     
+        LOG_PATH = '<ABSOLUTE_PATH>' #absolute path to log file
+        
         #Your domain and credentials
         ONTASK = {
             'url': '<YOUR_URL>', #e.g. ontask.com/
