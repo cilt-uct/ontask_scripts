@@ -15,6 +15,11 @@ def update_container_data():
 
     # foreach container, get all the data sources linked to that container and update/create them
     for container in containers:
+        if container['code'] is None:
+            logging.warning("Container: " + container['code'] + "does not have a description containing a Vula course "
+                                                                "ID site and therefore no data updates.")
+            continue
+
         data_sources = json.loads(get_all_data_sources(container['owner'], token))
         import_site_data(data_sources, container, token)
 
