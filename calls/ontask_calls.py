@@ -1,7 +1,7 @@
 import json
 
 from utils import *
-from vula_calls import *
+from calls.vula_calls import *
 
 
 def ontask_login():
@@ -13,15 +13,16 @@ def ontask_login():
     try:
         r = requests.post(url, data=data, headers=headers)
         r.raise_for_status()
-        return r.text
+        login_response = json.loads(r.text)
+        return login_response['token']
     except HTTPError as e:
         status_code = e.response.status_code
         logging.error(repr(status_code) + ": Failed to log into OnTask.")
 
 
-def get_all_containers(token):
+def get_all_containers():
     url = ONTASK['url'] + 'administration/containers/'
-    headers = {'Authorization': "Token " + token}
+    headers = {'Authorization': "Token " + ontask_login()}
 
     try:
         r = requests.get(url, headers=headers)
@@ -32,10 +33,10 @@ def get_all_containers(token):
         logging.error(repr(status_code) + ": Failed to get all containers from OnTask.")
 
 
-def get_all_data_sources(owner, token):
+def get_all_data_sources(owner):
     url = ONTASK['url'] + 'datasource/'
     payload = {'owner': owner}
-    headers = {'Authorization': "Token " + token}
+    headers = {'Authorization': "Token " + ontask_login()}
 
     try:
         r = requests.get(url, data=payload, headers=headers)
@@ -46,10 +47,10 @@ def get_all_data_sources(owner, token):
         logging.error(repr(status_code) + ": Failed to get all data sources from OnTask. Check container ID.")
 
 
-def create_data_sources(container, url, token, sources):
-    session = vula_login()
-    site_members = json.loads(get_site_memberships(container['description'], session))['membership_collection']
-    gradebook_data = json.loads(get_gradebook_data(container['description'], session))['assignments']
+def create_data_sources(container, url, sources):
+
+    site_members = json.loads(get_site_memberships(container['description']))['membership_collection']
+    gradebook_data = json.loads(get_gradebook_data(container['description']))['assignments']
 
     create_csv(site_members, sources[0] + ".csv")
     create_csv(gradebook_data, sources[1] + ".csv")
@@ -64,7 +65,7 @@ def create_data_sources(container, url, token, sources):
                        + source + '.csv","delimiter":","}]},'
                                   '"name":"Test"}',
         }
-        headers = {'Authorization': "Token " + token}
+        headers = {'Authorization': "Token " + ontask_login()}
 
         try:
             r = requests.post(url, data=payload, files=files, headers=headers)
@@ -77,14 +78,14 @@ def create_data_sources(container, url, token, sources):
                 container['code'] + " on OnTask. " + e.response.text)
 
 
-def update_data_sources(container, url, token, source):
-    session = vula_login()
+def update_data_sources(container, url, source):
+
     data_source_name = source['name']
     if data_source_name == 'Vula_Memberships':
-        site_members = json.loads(get_site_memberships(container['description'], session))['membership_collection']
+        site_members = json.loads(get_site_memberships(container['description']))['membership_collection']
         create_csv(site_members, data_source_name + ".csv")
     elif data_source_name == 'Vula_Gradebook':
-        gradebook_data = json.loads(get_gradebook_data(container['description'], session))['assignments']
+        gradebook_data = json.loads(get_gradebook_data(container['description']))['assignments']
         create_csv(gradebook_data, data_source_name + ".csv")
 
     files = {'file': open(CSV_PATH + data_source_name + '.csv', 'rb')}
@@ -94,7 +95,7 @@ def update_data_sources(container, url, token, source):
         'payload': '{"connection":{"dbType":"csvTextFile","files":[{"name":"'
                    + data_source_name + '.csv","delimiter":","}]},"name":"Test"}',
     }
-    headers = {'Authorization': "Token " + token}
+    headers = {'Authorization': "Token " + ontask_login()}
 
     try:
         r = requests.patch(url, data=payload, files=files, headers=headers)
