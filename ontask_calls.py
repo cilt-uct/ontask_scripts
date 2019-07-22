@@ -43,7 +43,7 @@ def get_all_data_sources(owner, token):
         return r.text
     except HTTPError as e:
         status_code = e.response.status_code
-        logging.error(repr(status_code) + ": Failed to get all data sources from OnTask.")
+        logging.error(repr(status_code) + ": Failed to get all data sources from OnTask. Check container ID.")
 
 
 def create_data_sources(container, url, token, sources):

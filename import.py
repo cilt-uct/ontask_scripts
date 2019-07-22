@@ -15,7 +15,7 @@ def update_container_data():
 
     # foreach container, get all the data sources linked to that container and update/create them
     for container in containers:
-        if container['code'] is None:
+        if container['description'] is None:
             logging.warning("Container: " + container['code'] + "does not have a description containing a Vula course "
                                                                 "ID site and therefore no data updates.")
             continue
