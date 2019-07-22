@@ -11,7 +11,7 @@ def ontask_login():
     data = json.dumps(payload)
 
     try:
-        r = requests.post(url, data=data, verify=False, headers=headers)
+        r = requests.post(url, data=data, headers=headers)
         r.raise_for_status()
         return r.text
     except HTTPError as e:
@@ -24,7 +24,7 @@ def get_all_containers(token):
     headers = {'Authorization': "Token " + token}
 
     try:
-        r = requests.get(url, verify=False, headers=headers)
+        r = requests.get(url, headers=headers)
         r.raise_for_status()
         return r.text
     except HTTPError as e:
@@ -38,7 +38,7 @@ def get_all_data_sources(owner, token):
     headers = {'Authorization': "Token " + token}
 
     try:
-        r = requests.get(url, data=payload, verify=False, headers=headers)
+        r = requests.get(url, data=payload, headers=headers)
         r.raise_for_status()
         return r.text
     except HTTPError as e:
@@ -67,7 +67,7 @@ def create_data_sources(container, url, token, sources):
         headers = {'Authorization': "Token " + token}
 
         try:
-            r = requests.post(url, data=payload, files=files, verify=False, headers=headers)
+            r = requests.post(url, data=payload, files=files, headers=headers)
             r.raise_for_status()
             logging.info("Successfully created datasource: " + source + " for container: " + container['code'])
         except HTTPError as e:
@@ -97,7 +97,7 @@ def update_data_sources(container, url, token, source):
     headers = {'Authorization': "Token " + token}
 
     try:
-        r = requests.patch(url, data=payload, files=files, verify=False, headers=headers)
+        r = requests.patch(url, data=payload, files=files, headers=headers)
         r.raise_for_status()
         return r
     except HTTPError as e:
