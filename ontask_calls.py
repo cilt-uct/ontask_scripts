@@ -56,7 +56,7 @@ def create_data_sources(container, url, token, sources):
 
     for source in sources:
 
-        files = {'file': open('csv/' + source + '.csv', 'rb')}
+        files = {'file': open(CSV_PATH + source + '.csv', 'rb')}
         payload = {
             'name': source,
             'container': container['id'],
@@ -87,7 +87,7 @@ def update_data_sources(container, url, token, source):
         gradebook_data = json.loads(get_gradebook_data(container['description'], session))['assignments']
         create_csv(gradebook_data, data_source_name + ".csv")
 
-    files = {'file': open('csv/' + data_source_name + '.csv', 'rb')}
+    files = {'file': open(CSV_PATH + data_source_name + '.csv', 'rb')}
     payload = {
         'name': data_source_name,
         'container': container['id'],

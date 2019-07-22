@@ -22,6 +22,7 @@ This script imports data from Sakai into ontask via a CSV. The process it follow
 2. Add the following:
     
         LOG_PATH = '<ABSOLUTE_PATH>' #absolute path to log file
+        CSV_PATH = '<ABSOLUTE_PATH>' #absolute path to csv folder
         
         #Your domain and credentials
         ONTASK = {

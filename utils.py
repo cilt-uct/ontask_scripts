@@ -5,7 +5,7 @@ from config.logging_config import *
 
 def create_csv(data, file_name):
     try:
-        output_file = open('csv/'+file_name, 'w')
+        output_file = open(CSV_PATH + file_name, 'w')
 
         output = csv.writer(output_file)
         output.writerow(data[0].keys())
