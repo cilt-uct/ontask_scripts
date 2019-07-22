@@ -1,4 +1,5 @@
 import requests
+import json
 
 from requests import HTTPError
 from config.logging_config import *
@@ -39,10 +40,11 @@ def get_site_memberships(site_id):
     try:
         r = requests.get(url, headers=headers)
         r.raise_for_status()
-        return r.text
+        return json.loads(r.text)
     except HTTPError as e:
         status_code = e.response.status_code
         logging.error(repr(status_code) + ": Failed to get site memberships from Vula.")
+        return {}
 
 
 def get_gradebook_data(site_id):
@@ -52,7 +54,8 @@ def get_gradebook_data(site_id):
     try:
         r = requests.get(url, headers=headers)
         r.raise_for_status()
-        return r.text
+        return json.loads(r.text)
     except HTTPError as e:
         status_code = e.response.status_code
         logging.error(repr(status_code) + ": Failed to get gradebook data from Vula.")
+        return {}

@@ -49,11 +49,17 @@ def get_all_data_sources(owner):
 
 def create_data_sources(container, url, sources):
 
-    site_members = json.loads(get_site_memberships(container['description']))['membership_collection']
-    gradebook_data = json.loads(get_gradebook_data(container['description']))['assignments']
-
+    site_members = get_site_memberships(container['description'])['membership_collection']
     create_csv(site_members, sources[0] + ".csv")
-    create_csv(gradebook_data, sources[1] + ".csv")
+
+    gradebook_data = get_gradebook_data(container['description'])
+
+    if not gradebook_data:
+        del sources[-1]
+        pass
+    else:
+        gradebook_data = gradebook_data['assignments']
+        create_csv(gradebook_data, sources[1] + ".csv")
 
     for source in sources:
 
@@ -82,10 +88,10 @@ def update_data_sources(container, url, source):
 
     data_source_name = source['name']
     if data_source_name == 'Vula_Memberships':
-        site_members = json.loads(get_site_memberships(container['description']))['membership_collection']
+        site_members = get_site_memberships(container['description'])['membership_collection']
         create_csv(site_members, data_source_name + ".csv")
     elif data_source_name == 'Vula_Gradebook':
-        gradebook_data = json.loads(get_gradebook_data(container['description']))['assignments']
+        gradebook_data = get_gradebook_data(container['description'])['assignments']
         create_csv(gradebook_data, data_source_name + ".csv")
 
     files = {'file': open(CSV_PATH + data_source_name + '.csv', 'rb')}
