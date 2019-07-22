@@ -22,15 +22,15 @@ This script imports data from Sakai into ontask via a CSV. The process it follow
 2. Add the following:
     
         #Your domain and credentials
-        ONTASK_CREDENTIALS = {
-            'url': '<YOUR_URL>' #e.g. ontask.com/
+        ONTASK = {
+            'url': '<YOUR_URL>', #e.g. ontask.com/
             'email': '<YOUR_EMAIL>',
             'password': '<YOUR_PASSWORD>'
         }
 
         #Your domain and credentials
-        VULA_CREDENTIALS = {
-            'url': '<YOUR_URL>' #e.g. lms.com/
+        VULA = {
+            'url': '<YOUR_URL>', #e.g. lms.com/
             'username': '<YOUR_USERNAME>',
             'password': '<YOUR_PASSWORD>'
          }

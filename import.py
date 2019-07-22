@@ -1,5 +1,5 @@
 from ontask_calls import *
-from config.logging_config import  *
+from config.logging_config import *
 
 
 def update_container_data():
@@ -44,7 +44,6 @@ def import_site_data(data_sources, container, token):
 
     logging.info("Import session completed.")
     logging.info("____________________________________________________________________________________________________")
-
 
 
 update_container_data()
