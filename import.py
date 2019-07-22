@@ -10,11 +10,11 @@ def update_container_data():
     token = login_response['token']
 
     containers = json.loads(get_all_containers(token))
-
     logging.info("Fetched " + repr(len(containers)) + " containers successfully.")
 
     # foreach container, get all the data sources linked to that container and update/create them
     for container in containers:
+        logging.info("Import for container: " + container['code'] + " has started.")
         if container['description'] is None:
             logging.warning("Container: " + container['code'] + "does not have a description containing a Vula course "
                                                                 "ID site and therefore no data updates.")
@@ -22,6 +22,10 @@ def update_container_data():
 
         data_sources = json.loads(get_all_data_sources(container['owner'], token))
         import_site_data(data_sources, container, token)
+        logging.info("Import for container: " + container['code'] + " complete.")
+
+    logging.info("Import session completed.")
+    logging.info("____________________________________________________________________________________________________")
 
 
 def import_site_data(data_sources, container, token):
@@ -46,9 +50,6 @@ def import_site_data(data_sources, container, token):
         if r is not None:
             logging.info(
                 "Updated container: " + container['code'] + " data-source: " + data_source['name'] + ", successfully.")
-
-    logging.info("Import session completed.")
-    logging.info("____________________________________________________________________________________________________")
 
 
 update_container_data()
