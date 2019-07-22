@@ -89,7 +89,7 @@ def update_data_sources(container, url, token, source):
 
     files = {'file': open('csv/' + data_source_name + '.csv', 'rb')}
     payload = {
-        'name': source,
+        'name': data_source_name,
         'container': container['id'],
         'payload': '{"connection":{"dbType":"csvTextFile","files":[{"name":"'
                    + data_source_name + '.csv","delimiter":","}]},"name":"Test"}',
@@ -97,7 +97,7 @@ def update_data_sources(container, url, token, source):
     headers = {'Authorization': "Token " + token}
 
     try:
-        r = requests.options(url, data=payload, files=files, verify=False, headers=headers)
+        r = requests.patch(url, data=payload, files=files, verify=False, headers=headers)
         r.raise_for_status()
         return r
     except HTTPError as e:

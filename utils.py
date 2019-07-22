@@ -15,7 +15,6 @@ def create_csv(data, file_name):
         logging.error('Something went wrong during the creation of a CSV:' + e)
 
 
-
 def do_all_data_sources_exist(existing, required):
 
     if len(existing) < len(required):
