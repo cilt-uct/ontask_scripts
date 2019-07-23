@@ -21,14 +21,12 @@ def update_containers(containers):
         logging.info("Import for container: " + container['code'] + " has started.")
 
         if container['description'] is None:
-            logging.warning("Container: " + container['code'] + " does not have a description containing a Vula course "
-                                                                "ID site and therefore no data updates.")
+            logging.warning("Container: " + container['code'] + " description does not contain site ID.")
             continue
 
         exists = check_if_site_exists(container['description'])
         if not exists:
-            logging.warning("Container: " + container['code'] + " does not have a description containing a Vula course "
-                                                                "ID site and therefore no data updates.")
+            logging.warning("Container: " + container['code'] + " site ID does not exist in Vula.")
             continue
 
         data_sources = json.loads(get_all_data_sources(container['owner']))
