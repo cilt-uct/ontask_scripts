@@ -20,7 +20,7 @@ def get_all_containers():
 def get_all_data_sources(owner):
     url = ONTASK['url'] + 'datasource/'
     payload = {'owner': owner}
-    headers = {'Authorization': "Token " + ontask_login()}
+    headers = {'Authorization': "Token " + is_container_owner_admin(owner)}
 
     try:
         r = requests.get(url, data=payload, headers=headers)
