@@ -4,22 +4,6 @@ from utils import *
 from calls.vula_calls import *
 
 
-def ontask_login():
-    url = ONTASK['url'] + 'auth/local/'
-    payload = {'email': ONTASK['email'], 'password': ONTASK['password']}
-    headers = {'Content-Type': 'application/json'}
-    data = json.dumps(payload)
-
-    try:
-        r = requests.post(url, data=data, headers=headers)
-        r.raise_for_status()
-        login_response = json.loads(r.text)
-        return login_response['token']
-    except HTTPError as e:
-        status_code = e.response.status_code
-        logging.error(repr(status_code) + ": Failed to log into OnTask.")
-
-
 def get_all_containers():
     url = ONTASK['url'] + 'administration/containers/'
     headers = {'Authorization': "Token " + ontask_login()}
@@ -48,7 +32,6 @@ def get_all_data_sources(owner):
 
 
 def create_data_sources(container, url, sources):
-
     site_members = get_site_memberships(container['description'])['membership_collection']
     create_csv(site_members, sources[0] + ".csv")
 
@@ -71,7 +54,7 @@ def create_data_sources(container, url, sources):
                        + source + '.csv","delimiter":","}]},'
                                   '"name":"Test"}',
         }
-        headers = {'Authorization': "Token " + ontask_login()}
+        headers = {'Authorization': "Token " + is_container_owner_admin(container['owner'])}
 
         try:
             r = requests.post(url, data=payload, files=files, headers=headers)
@@ -85,7 +68,6 @@ def create_data_sources(container, url, sources):
 
 
 def update_data_sources(container, url, source):
-
     data_source_name = source['name']
     if data_source_name == 'Vula_Memberships':
         site_members = get_site_memberships(container['description'])['membership_collection']
@@ -101,7 +83,7 @@ def update_data_sources(container, url, source):
         'payload': '{"connection":{"dbType":"csvTextFile","files":[{"name":"'
                    + data_source_name + '.csv","delimiter":","}]},"name":"Test"}',
     }
-    headers = {'Authorization': "Token " + ontask_login()}
+    headers = {'Authorization': "Token " + is_container_owner_admin(container['owner'])}
 
     try:
         r = requests.patch(url, data=payload, files=files, headers=headers)

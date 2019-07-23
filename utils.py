@@ -1,6 +1,6 @@
 import csv
 
-from calls.ontask_calls import *
+from calls.ontask_login_calls import *
 from config.logging_config import *
 
 
@@ -17,7 +17,6 @@ def create_csv(data, file_name):
 
 
 def do_all_data_sources_exist(existing, required):
-
     if len(existing) < len(required):
         return False
 
@@ -27,3 +26,10 @@ def do_all_data_sources_exist(existing, required):
         return True
     else:
         return False
+
+
+def is_container_owner_admin(owner):
+    if owner != ONTASK['email']:
+        return ontask_login_as_owner(owner)
+    else:
+        return ontask_login()
