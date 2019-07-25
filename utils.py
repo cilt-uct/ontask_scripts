@@ -12,8 +12,11 @@ def create_csv(data, file_name):
         output.writerow(data[0].keys())
         for row in data:
             output.writerow(row.values())
+        return True
     except Exception as e:
-        logging.error('Something went wrong during the creation of a CSV:' + e)
+        logging.error('Something went wrong during the creation of a CSV:' + e.message)
+
+    return False
 
 
 def do_all_data_sources_exist(existing, required):
