@@ -31,7 +31,7 @@ def get_all_data_sources(owner):
         logging.error(repr(status_code) + ": Failed to get all data sources from OnTask. Check container ID.")
 
 
-def import_csv(container, url, source):
+def import_csv(container, url, source, create):
     files = {'file': open(CSV_PATH + source + '.csv', 'rb')}
     payload = {
         'name': source,
@@ -43,32 +43,17 @@ def import_csv(container, url, source):
     headers = {'Authorization': "Token " + is_container_owner_admin(container['owner'])}
 
     try:
-        r = requests.post(url, data=payload, files=files, headers=headers)
+        if create:
+            r = requests.post(url, data=payload, files=files, headers=headers)
+            message = "Successfully created data-source: " + source + " for container: " + container['code']
+        else:
+            r = requests.patch(url, data=payload, files=files, headers=headers)
+            message = "Successfully updated data-source: " + source + " for container: " + container['code']
+
         r.raise_for_status()
-        logging.info("Successfully created datasource: " + source + " for container: " + container['code'])
+        logging.info(message)
     except HTTPError as e:
         status_code = e.response.status_code
         logging.error(
             repr(status_code) + ": Failed to create data-sources OnTask. Container: " +
             container['code'] + " on OnTask. " + e.response.text)
-
-
-def import_updated_csv(container, url, source):
-    files = {'file': open(CSV_PATH + source + '.csv', 'rb')}
-    payload = {
-        'name': source,
-        'container': container['id'],
-        'payload': '{"connection":{"dbType":"csvTextFile","files":[{"name":"'
-                   + source + '.csv","delimiter":","}]},"name":"Test"}',
-    }
-    headers = {'Authorization': "Token " + is_container_owner_admin(container['owner'])}
-
-    try:
-        r = requests.patch(url, data=payload, files=files, headers=headers)
-        r.raise_for_status()
-        return r
-    except HTTPError as e:
-        status_code = e.response.status_code
-        logging.error(
-            repr(status_code) + ": Failed to update data for container: " +
-            container['code'] + " data-source: " + source + " on OnTask. " + e.response.text)

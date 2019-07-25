@@ -16,7 +16,6 @@ def update_container_data():
 
 
 def update_containers(containers):
-    # foreach container, get all the data sources linked to that container and update/create them
     for container in containers:
         logging.info("Import for container: " + container['code'] + " has started.")
 
@@ -54,42 +53,36 @@ def import_site_data(data_sources, container, session):
             continue
 
         url = ONTASK['url'] + 'datasource/' + data_source['id'] + '/'
-        r = update_data_sources(container, url, data_source, session)
-        if r is not None:
-            logging.info(
-                "Updated container: " + container['code'] + " data-source: " + data_source['name'] + ", successfully.")
+        update_data_sources(container, url, data_source, session)
 
 
 def create_data_sources(container, url, sources, session):
-
-    site_members = get_site_memberships(container['description'], session)
-    if site_members:
-        site_members = site_members['membership_collection']
-        if create_csv(site_members, sources[0] + ".csv"):
-            import_csv(container, url, sources[0])
-
-    gradebook_data = get_gradebook_data(container['description'], session)
-    if gradebook_data:
-        gradebook_data = gradebook_data['assignments']
-        if create_csv(gradebook_data, sources[1] + ".csv"):
-            import_csv(container, url, sources[1])
+    update_memberships(container, url, sources[0], session, True)
+    update_gradebook(container, url, sources[1], session, True)
 
 
 def update_data_sources(container, url, source, session):
     data_source_name = source['name']
-
     if data_source_name == 'Vula_Memberships':
-        site_members = get_site_memberships(container['description'], session)
-        if site_members:
-            site_members = site_members['membership_collection']
-            if create_csv(site_members, data_source_name + ".csv"):
-                return import_updated_csv(container, url, data_source_name)
+        update_memberships(container, url, data_source_name, session, False)
     elif data_source_name == 'Vula_Gradebook':
-        gradebook_data = get_gradebook_data(container['description'], session)
-        if gradebook_data:
-            gradebook_data = gradebook_data['assignments']
-            if create_csv(gradebook_data, data_source_name + ".csv"):
-                return import_updated_csv(container, url, data_source_name)
+        update_gradebook(container, url, data_source_name, session, False)
+
+
+def update_memberships(container, url, source, session, create):
+    site_members = get_site_memberships(container['description'], session)
+    if site_members:
+        site_members = site_members['membership_collection']
+        if create_csv(site_members, source + ".csv"):
+            import_csv(container, url, source, create)
+
+
+def update_gradebook(container, url, source, session, create):
+    gradebook_data = get_gradebook_data(container['description'], session)
+    if gradebook_data:
+        gradebook_data = gradebook_data['assignments']
+        if create_csv(gradebook_data, source + ".csv"):
+            import_csv(container, url, source, create)
 
 
 update_container_data()
