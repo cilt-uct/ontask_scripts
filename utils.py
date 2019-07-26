@@ -1,4 +1,5 @@
 import csv
+import pandas
 
 from calls.ontask_login_calls import *
 from config.logging_config import *
@@ -36,3 +37,40 @@ def is_container_owner_admin(owner):
         return ontask_login_as_owner(owner)
     else:
         return ontask_login()
+
+
+def transform_data(gradebook_data, source):
+    try:
+        cols = list(map(lambda x: "GB " + x['itemName'], gradebook_data))
+        cols = ordered_unique_list(cols)
+        row_headers = set(map(lambda x: x['userId'], gradebook_data))
+        rows = create_table(gradebook_data, row_headers)
+        data_frame = pandas.DataFrame(rows, columns=cols, index=row_headers)
+        data_frame.to_csv(CSV_PATH + source + ".csv", index=True, index_label="userId", header=True)
+        return True
+    except Exception as e:
+        logging.error('Something went wrong during the creation of a CSV via a data-frame:' + e.message)
+
+    return False
+
+
+def create_table(gradebook_data, row_headers):
+    rows = []
+    if len(gradebook_data) == 0 or len(row_headers) == 0:
+        logging.error("Gradebook or row headers are empty")
+        return rows
+
+    for row in row_headers:
+        grades = []
+        for grade in gradebook_data:
+            if row == grade['userId']:
+                grades.append(grade['grade'])
+
+        rows.append(grades)
+    return rows
+
+
+def ordered_unique_list(columns):
+    seen = set()
+    seen_add = seen.add
+    return [x for x in columns if not (x in seen or seen_add(x))]
