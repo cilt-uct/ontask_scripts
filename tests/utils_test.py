@@ -1,7 +1,7 @@
 import unittest
 
 from utils import *
-from test_helper import gradebook
+from test_helper import gradebook, membership
 
 
 class MyTestCase(unittest.TestCase):
@@ -66,6 +66,33 @@ class MyTestCase(unittest.TestCase):
         table = create_table(gradebook, row_headers)
         self.assertTrue(table[0][0] == "35")
         self.assertTrue(table[0][1] == "50")
+
+    def test_delete_unwanted_keys(self):
+        data = delete_unwanted_keys(membership)
+        self.assertTrue(len(data) == 3)
+        self.assertEqual(data['test'], 'successful')
+
+    def test_delete_unwanted_keys_empty_membership(self):
+        data = delete_unwanted_keys({})
+        self.assertTrue(len(data) == 0)
+
+    def test_update_student_number(self):
+        data = update_student_number(membership)
+        self.assertEqual(data['userEid'], 'ABCXYZ001')
+        self.assertNotEqual(data['userEid'], 'abcxyz001')
+
+    def test_update_student_number_empty_membership(self):
+        data = update_student_number({})
+        self.assertTrue(not data)
+
+    def test_update_name(self):
+        data = update_name(membership)
+        self.assertEqual(data['firstname'], 'Cilt')
+        self.assertEqual(data['lastname'], 'Team')
+
+    def test_update_name_empty_membership(self):
+        data = update_name({})
+        self.assertTrue(not data)
 
 
 if __name__ == '__main__':

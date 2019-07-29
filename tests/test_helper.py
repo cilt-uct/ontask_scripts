@@ -28,3 +28,18 @@ gradebook = [
         'userName': 'Assignment'
     }
 ]
+
+membership = {
+    'locationReference': 'location',
+    'lastLoginTime': 'time',
+    'entityReference': 'entity',
+    'entityId': 'entity_id',
+    'id': 'id',
+    'entityURL': 'entity_url',
+    'siteType': 'site',
+    'userDisplayId': 'user',
+    'entityTitle': 'title',
+    'test': 'successful',
+    'userEid': 'abcxyz001',
+    'userSortName': 'Team, Cilt'
+}
