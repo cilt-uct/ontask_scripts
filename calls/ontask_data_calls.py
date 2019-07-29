@@ -55,5 +55,5 @@ def import_csv(container, url, source, create):
     except HTTPError as e:
         status_code = e.response.status_code
         logging.error(
-            repr(status_code) + ": Failed to create data-sources OnTask. Container: " +
+            repr(status_code) + ": Failed to create/update data-sources OnTask. Container: " +
             container['code'] + " on OnTask. " + e.response.text)

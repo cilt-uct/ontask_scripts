@@ -81,7 +81,7 @@ def update_gradebook(container, url, source, session, create):
     gradebook_data = get_gradebook_data(container['description'], session)
     if gradebook_data:
         gradebook_data = gradebook_data['assignments']
-        if create_csv(gradebook_data, source + ".csv"):
+        if transform_data(gradebook_data, source):
             import_csv(container, url, source, create)
 
 
