@@ -1,6 +1,7 @@
 import csv
 import pandas
 
+from collections import OrderedDict
 from calls.ontask_login_calls import *
 from config.logging_config import *
 
@@ -54,7 +55,7 @@ def create_csv(data, file_name):
             delete_unwanted_keys(row)
             update_student_number(row)
             update_name(row)
-            sorted_row = dict(sorted(row.items()))
+            sorted_row = OrderedDict(sorted(row.items()))
             output.writerow(sorted_row.values())
         return True
     except Exception as e:
