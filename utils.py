@@ -48,12 +48,14 @@ def create_csv(data, file_name):
         headers = delete_unwanted_keys(first_row).keys()
         headers_list = list(headers)
         headers_list.extend(['firstname', 'lastname'])
+        headers_list.sort()
         output.writerow(headers_list)
         for row in data:
             delete_unwanted_keys(row)
             update_student_number(row)
             update_name(row)
-            output.writerow(row.values())
+            sorted_row = dict(sorted(row.items()))
+            output.writerow(sorted_row.values())
         return True
     except Exception as e:
         logging.error('Something went wrong during the creation of a CSV: ' + str(e))
