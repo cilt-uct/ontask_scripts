@@ -55,7 +55,8 @@ def create_csv(data, file_name):
             delete_unwanted_keys(row)
             update_student_number(row)
             update_name(row)
-            sorted_row = dict(sorted(row.items()))
+            sorted_row = list(row.items())
+            sorted_row.sort()
             print(sorted_row)
             output.writerow(sorted_row.values())
         return True
