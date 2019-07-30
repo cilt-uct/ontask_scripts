@@ -65,7 +65,7 @@ def update_data_sources(container, url, source, session):
     data_source_name = source['name']
     if data_source_name == 'Vula_Memberships':
         update_memberships(container, url, data_source_name, session, False)
-    elif data_source_name == 'Vula_Gradebook':
+    elif data_source_name == 'Vula':
         update_gradebook(container, url, data_source_name, session, False)
 
 

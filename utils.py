@@ -49,12 +49,14 @@ def create_csv(data, file_name):
         headers_list = list(headers)
         headers_list.extend(['firstname', 'lastname'])
         headers_list.sort()
+        print(headers_list)
         output.writerow(headers_list)
         for row in data:
             delete_unwanted_keys(row)
             update_student_number(row)
             update_name(row)
             sorted_row = dict(sorted(row.items()))
+            print(sorted_row)
             output.writerow(sorted_row.values())
         return True
     except Exception as e:
