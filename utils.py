@@ -1,6 +1,7 @@
 import csv
 import pandas
 
+from collections import OrderedDict
 from calls.ontask_login_calls import *
 from config.logging_config import *
 
@@ -57,7 +58,7 @@ def create_csv(data, file_name):
             update_name(row)
             sorted_row = list(row.items())
             sorted_row.sort()
-            sorted_dict = dict(sorted_row)
+            sorted_dict = OrderedDict(sorted_row)
             print(sorted_dict)
             output.writerow(sorted_dict.values())
         return True
