@@ -57,8 +57,9 @@ def create_csv(data, file_name):
             update_name(row)
             sorted_row = list(row.items())
             sorted_row.sort()
-            print(sorted_row)
-            output.writerow(sorted_row.values())
+            sorted_dict = dict(sorted_row)
+            print(sorted_dict)
+            output.writerow(sorted_dict.values())
         return True
     except Exception as e:
         logging.error('Something went wrong during the creation of a CSV: ' + str(e))
