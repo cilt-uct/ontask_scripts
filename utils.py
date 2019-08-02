@@ -3,60 +3,23 @@ import pandas
 
 from collections import OrderedDict
 from calls.ontask_login_calls import *
-from config.logging_config import *
+from transform.transform_memberships_data import *
+from transform.transform_gradebook_data import *
 
 
-def delete_unwanted_keys(row):
-    row.pop('locationReference', None)
-    row.pop('lastLoginTime', None)
-    row.pop('entityReference', None)
-    row.pop('entityId', None)
-    row.pop('id', None)
-    row.pop('entityURL', None)
-    row.pop('siteType', None)
-    row.pop('userDisplayId', None)
-    row.pop('entityTitle', None)
-    return row
-
-
-def update_student_number(row):
-    try:
-        row['userEid'] = row['userEid'].upper()
-        return row
-    except Exception as e:
-        logging.error("Something went wrong during the capitalisation of the student number: " + str(e))
-        return row
-
-
-def update_name(row):
-    try:
-        full_name = row['userSortName'].replace(" ", "").split(",")
-        row['firstname'] = full_name[1]
-        row['lastname'] = full_name[0]
-        return row
-    except Exception as e:
-        logging.error("Something went wrong during the separation of firstname and lastname : " + str(e))
-        return row
-
-
-def create_csv(data, file_name):
+def create_memberships_csv(data, file_name):
     try:
         output_file = open(CSV_PATH + file_name, 'w')
-
         output = csv.writer(output_file)
+        output.writerow(header(data[0]))
 
-        first_row = data[0]
-        headers = delete_unwanted_keys(first_row).keys()
-        headers_list = list(headers)
-        headers_list.extend(['firstname', 'lastname'])
-        headers_list.sort()
-        output.writerow(headers_list)
         for row in data:
             delete_unwanted_keys(row)
             update_student_number(row)
             update_name(row)
             sorted_row = OrderedDict(sorted(row.items()))
             output.writerow(sorted_row.values())
+
         return True
     except Exception as e:
         logging.error('Something went wrong during the creation of a CSV: ' + str(e))
@@ -83,38 +46,35 @@ def is_container_owner_admin(owner):
         return ontask_login()
 
 
-def transform_data(gradebook_data, source):
+def create_gradebook_csv(gradebook_data, source):
     try:
         cols = list(map(lambda x: "GB " + x['itemName'], gradebook_data))
         cols = ordered_unique_list(cols)
-        row_headers = set(map(lambda x: x['userId'], gradebook_data))
-        rows = create_table(gradebook_data, row_headers)
-        data_frame = pandas.DataFrame(rows, columns=cols, index=row_headers)
+
+        # get all userIds, set to filter duplicates, list to maintain order.
+        row_headers_userid = list(set(map(lambda x: x['userId'], gradebook_data)))
+        rows = create_table(gradebook_data, row_headers_userid)
+        userid_usereid_dict = get_userid_usereid_dict()
+        row_headers_usereid = list(map(lambda x: userid_usereid_dict[x], row_headers_userid))
+
+        data_frame = pandas.DataFrame(rows, columns=cols, index=row_headers_usereid)
         data_frame.to_csv(CSV_PATH + source + ".csv", index=True, index_label="userId", header=True)
         return True
     except Exception as e:
-        logging.error('Something went wrong during the creation of a CSV via a data-frame:' + e.message)
+        logging.error('Something went wrong during the creation of a CSV via a data-frame:' + str(e))
 
     return False
 
 
-def create_table(gradebook_data, row_headers):
-    rows = []
-    if len(gradebook_data) == 0 or len(row_headers) == 0:
-        logging.error("Gradebook or row headers are empty")
-        return rows
+def get_userid_usereid_dict():
+    userid_usereid_dict = {}
 
-    for row in row_headers:
-        grades = []
-        for grade in gradebook_data:
-            if row == grade['userId']:
-                grades.append(grade['grade'])
+    with open(CSV_PATH+'Vula_Memberships.csv', newline='') as csv_file:
 
-        rows.append(grades)
-    return rows
+        memberships = csv.reader(csv_file, delimiter=',', quotechar='"')
+        next(memberships)
 
+        for row in memberships:
+            userid_usereid_dict[row[8]] = row[6]
 
-def ordered_unique_list(columns):
-    seen = set()
-    seen_add = seen.add
-    return [x for x in columns if not (x in seen or seen_add(x))]
+    return userid_usereid_dict

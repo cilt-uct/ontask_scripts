@@ -1,6 +1,7 @@
 import unittest
 
 from utils import *
+from transform.transform_memberships_data import *
 from test_helper import gradebook, membership
 
 
