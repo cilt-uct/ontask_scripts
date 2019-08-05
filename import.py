@@ -1,5 +1,6 @@
 from calls.ontask_data_calls import *
-from config.logging_config import *
+from transform.transform_gradebook_data import *
+from transform.transform_memberships_data import *
 
 
 def update_container_data():
@@ -73,7 +74,7 @@ def update_memberships(container, url, source, session, create):
     site_members = get_site_memberships(container['description'], session)
     if site_members:
         site_members = site_members['membership_collection']
-        if create_csv(site_members, source + ".csv"):
+        if create_memberships_csv(site_members, source + ".csv"):
             import_csv(container, url, source, create)
 
 
@@ -81,7 +82,7 @@ def update_gradebook(container, url, source, session, create):
     gradebook_data = get_gradebook_data(container['description'], session)
     if gradebook_data:
         gradebook_data = gradebook_data['assignments']
-        if transform_data(gradebook_data, source):
+        if create_gradebook_csv(gradebook_data, source):
             import_csv(container, url, source, create)
 
 
