@@ -16,7 +16,7 @@ def create_gradebook_csv(gradebook_data, source):
         row_headers_usereid = list(map(lambda x: userid_usereid_dict[x], row_headers_userid))
 
         data_frame = pandas.DataFrame(rows, columns=cols, index=row_headers_usereid)
-        data_frame.to_csv(CSV_PATH + source + ".csv", index=True, index_label="userId", header=True)
+        data_frame.to_csv(CSV_PATH + source + ".csv", index=True, index_label="UserEid", header=True)
         return True
     except Exception as e:
         logging.error('Something went wrong during the creation of a CSV via a data-frame:' + str(e))
