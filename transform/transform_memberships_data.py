@@ -1,4 +1,27 @@
+import csv
+
 from config.logging_config import *
+from collections import OrderedDict
+
+
+def create_memberships_csv(data, file_name):
+    try:
+        output_file = open(CSV_PATH + file_name, 'w')
+        output = csv.writer(output_file)
+        output.writerow(header(data[0]))
+
+        for row in data:
+            delete_unwanted_keys(row)
+            update_student_number(row)
+            update_name(row)
+            sorted_row = OrderedDict(sorted(row.items()))
+            output.writerow(sorted_row.values())
+
+        return True
+    except Exception as e:
+        logging.error('Something went wrong during the creation of a CSV: ' + str(e))
+
+    return False
 
 
 def delete_unwanted_keys(row):

@@ -1,5 +1,6 @@
 from calls.ontask_data_calls import *
-from config.logging_config import *
+from transform.transform_gradebook_data import *
+from transform.transform_memberships_data import *
 
 
 def update_container_data():
