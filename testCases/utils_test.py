@@ -1,7 +1,9 @@
 import unittest
 
+from .utils_test_helper import *
+from transform.transform_gradebook_data import *
+from transform.transform_memberships_data import *
 from utils import *
-from test_helper import gradebook, membership
 
 
 class MyTestCase(unittest.TestCase):
